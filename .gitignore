@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+.DS_Store
+*.log
+.env
+.vscode/
+*.tmp
+sih_ps_output/*.md
+sih_ps_output/*.csv
+sih_ps_output/*.json
