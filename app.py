@@ -45,7 +45,7 @@ def load_data():
     try:
         # For Streamlit Cloud - load from cloud storage
         # Replace this URL with your actual data file URL
-        json_url = "https://raw.githubusercontent.com/Siddhesh1401/SIH-PS-2025/main/sih_ps_output/sih_ps_all.json"
+        json_url = "https://raw.githubusercontent.com/Siddhesh1401/SIH-PS-2025/main/sih_ps_all.json"
 
         import requests
         response = requests.get(json_url)
