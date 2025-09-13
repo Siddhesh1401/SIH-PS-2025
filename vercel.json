@@ -12,11 +12,11 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/dashboard.py"
+      "dest": "/api/dashboard.py"
     }
   ],
   "functions": {
-    "dashboard.py": {
+    "api/dashboard.py": {
       "runtime": "python3.9",
       "maxDuration": 30,
       "memory": 1024
