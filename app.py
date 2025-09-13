@@ -90,8 +90,8 @@ def load_data():
         # For Streamlit Cloud, prioritize GitHub URLs over local files
         data_sources = [
             # GitHub raw URLs (prioritize these for Streamlit Cloud)
-            "https://raw.githubusercontent.com/Siddhesh1401/SIH-PS-2025/main/sih_ps_all.json",
             "https://raw.githubusercontent.com/Siddhesh1401/SIH-PS-2025/master/sih_ps_all.json",
+            "https://raw.githubusercontent.com/Siddhesh1401/SIH-PS-2025/main/sih_ps_all.json",
             # Local file (fallback for local development)
             Path("sih_ps_all.json"),
         ]
