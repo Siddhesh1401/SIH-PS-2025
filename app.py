@@ -43,53 +43,74 @@ st.markdown("""
 @st.cache_data
 def load_data():
     try:
-        # For Streamlit Cloud - load from cloud storage
-        # Replace this URL with your actual data file URL
-        json_url = "https://raw.githubusercontent.com/Siddhesh1401/SIH-PS-2025/main/sih_ps_all.json"
+        # Try multiple sources for data loading
+        data_sources = [
+            # Local file (for local development)
+            Path("sih_ps_all.json"),
+            # GitHub raw URL
+            "https://raw.githubusercontent.com/Siddhesh1401/SIH-PS-2025/main/sih_ps_all.json",
+            # Alternative GitHub URL
+            "https://raw.githubusercontent.com/Siddhesh1401/SIH-PS-2025/master/sih_ps_all.json"
+        ]
 
-        import requests
-        response = requests.get(json_url)
-        if response.status_code == 200:
-            data = response.json()
-            return pd.DataFrame(data)
-        else:
-            # Fallback to sample data
-            st.warning("⚠️ Could not load full data from cloud. Showing sample data instead.")
-            sample_data = [
-                {
-                    "title": "Smart Community Health Monitoring System",
-                    "category": "Healthcare",
-                    "organization": "Ministry of Health",
-                    "description": "Develop a system for monitoring community health using IoT sensors and AI analytics."
-                },
-                {
-                    "title": "AI-Powered Crop Disease Detection",
-                    "category": "Agriculture",
-                    "organization": "Ministry of Agriculture",
-                    "description": "Create an AI system to detect crop diseases using image recognition and provide treatment recommendations."
-                },
-                {
-                    "title": "Smart Traffic Management System",
-                    "category": "Transportation",
-                    "organization": "Ministry of Road Transport",
-                    "description": "Implement an intelligent traffic management system using computer vision and machine learning."
-                },
-                {
-                    "title": "Digital Learning Platform for Rural Areas",
-                    "category": "Education",
-                    "organization": "Ministry of Education",
-                    "description": "Build an offline-first digital learning platform for students in rural areas with limited internet connectivity."
-                },
-                {
-                    "title": "Waste Management Optimization",
-                    "category": "Environment",
-                    "organization": "Ministry of Environment",
-                    "description": "Develop a smart waste segregation and management system using IoT sensors and data analytics."
-                }
-            ]
-            return pd.DataFrame(sample_data)
+        for source in data_sources:
+            try:
+                if isinstance(source, Path):
+                    # Local file
+                    if source.exists():
+                        with open(source, 'r', encoding='utf-8') as f:
+                            data = json.load(f)
+                        st.success(f"✅ Loaded data from local file ({len(data)} problems)")
+                        return pd.DataFrame(data)
+                else:
+                    # URL
+                    import requests
+                    response = requests.get(source, timeout=10)
+                    if response.status_code == 200:
+                        data = response.json()
+                        st.success(f"✅ Loaded data from cloud ({len(data)} problems)")
+                        return pd.DataFrame(data)
+            except Exception as e:
+                st.warning(f"⚠️ Failed to load from {source}: {str(e)}")
+                continue
+
+        # If all sources fail, show sample data
+        st.warning("⚠️ Could not load full data from any source. Showing sample data instead.")
+        sample_data = [
+            {
+                "title": "Smart Community Health Monitoring System",
+                "category": "Healthcare",
+                "organization": "Ministry of Health",
+                "description": "Develop a system for monitoring community health using IoT sensors and AI analytics for early disease detection and prevention."
+            },
+            {
+                "title": "AI-Powered Crop Disease Detection",
+                "category": "Agriculture",
+                "organization": "Ministry of Agriculture",
+                "description": "Create an AI system to detect crop diseases using image recognition and provide treatment recommendations to farmers."
+            },
+            {
+                "title": "Smart Traffic Management System",
+                "category": "Transportation",
+                "organization": "Ministry of Road Transport",
+                "description": "Implement an intelligent traffic management system using computer vision and machine learning to reduce congestion."
+            },
+            {
+                "title": "Digital Learning Platform for Rural Areas",
+                "category": "Education",
+                "organization": "Ministry of Education",
+                "description": "Build an offline-first digital learning platform for students in rural areas with limited internet connectivity."
+            },
+            {
+                "title": "Waste Management Optimization",
+                "category": "Environment",
+                "organization": "Ministry of Environment",
+                "description": "Develop a smart waste segregation and management system using IoT sensors and data analytics for efficient waste processing."
+            }
+        ]
+        return pd.DataFrame(sample_data)
     except Exception as e:
-        st.error(f"Error loading data: {str(e)}")
+        st.error(f"❌ Error loading data: {str(e)}")
         return pd.DataFrame()
 
 # Main app
