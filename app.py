@@ -87,18 +87,19 @@ st.markdown("""
 @st.cache_data
 def load_data():
     try:
-        # Try multiple sources for data loading
+        # For Streamlit Cloud, prioritize GitHub URLs over local files
         data_sources = [
-            # Local file (for local development)
-            Path("sih_ps_all.json"),
-            # GitHub raw URL
+            # GitHub raw URLs (prioritize these for Streamlit Cloud)
             "https://raw.githubusercontent.com/Siddhesh1401/SIH-PS-2025/main/sih_ps_all.json",
-            # Alternative GitHub URL
-            "https://raw.githubusercontent.com/Siddhesh1401/SIH-PS-2025/master/sih_ps_all.json"
+            "https://raw.githubusercontent.com/Siddhesh1401/SIH-PS-2025/master/sih_ps_all.json",
+            # Local file (fallback for local development)
+            Path("sih_ps_all.json"),
         ]
 
-        for source in data_sources:
+        for i, source in enumerate(data_sources):
             try:
+                st.info(f"🔄 Trying to load data from source {i+1}...")
+
                 if isinstance(source, Path):
                     # Local file
                     if source.exists():
@@ -107,54 +108,51 @@ def load_data():
                         st.success(f"✅ Loaded data from local file ({len(data)} problems)")
                         return pd.DataFrame(data)
                 else:
-                    # URL
+                    # URL - try to load from GitHub
                     import requests
-                    response = requests.get(source, timeout=10)
+                    response = requests.get(source, timeout=15)
+                    st.write(f"URL: {source}")
+                    st.write(f"Status Code: {response.status_code}")
+
                     if response.status_code == 200:
                         data = response.json()
-                        st.success(f"✅ Loaded data from cloud ({len(data)} problems)")
+                        st.success(f"✅ Loaded data from GitHub ({len(data)} problems)")
                         return pd.DataFrame(data)
+                    else:
+                        st.warning(f"❌ HTTP {response.status_code} from {source}")
+
             except Exception as e:
-                st.warning(f"⚠️ Failed to load from {source}: {str(e)}")
+                st.error(f"❌ Failed to load from source {i+1}: {str(e)}")
                 continue
 
         # If all sources fail, show sample data
-        st.warning("⚠️ Could not load full data from any source. Showing sample data instead.")
+        st.error("❌ Could not load data from any source. Using sample data.")
         sample_data = [
             {
                 "title": "Smart Community Health Monitoring System",
                 "category": "Healthcare",
                 "organization": "Ministry of Health",
-                "description": "Develop a system for monitoring community health using IoT sensors and AI analytics for early disease detection and prevention."
+                "description": "Develop a system for monitoring community health using IoT sensors and AI analytics for early disease detection and prevention.",
+                "ps_id": "25001"
             },
             {
                 "title": "AI-Powered Crop Disease Detection",
                 "category": "Agriculture",
                 "organization": "Ministry of Agriculture",
-                "description": "Create an AI system to detect crop diseases using image recognition and provide treatment recommendations to farmers."
+                "description": "Create an AI system to detect crop diseases using image recognition and provide treatment recommendations to farmers.",
+                "ps_id": "25002"
             },
             {
                 "title": "Smart Traffic Management System",
                 "category": "Transportation",
                 "organization": "Ministry of Road Transport",
-                "description": "Implement an intelligent traffic management system using computer vision and machine learning to reduce congestion."
-            },
-            {
-                "title": "Digital Learning Platform for Rural Areas",
-                "category": "Education",
-                "organization": "Ministry of Education",
-                "description": "Build an offline-first digital learning platform for students in rural areas with limited internet connectivity."
-            },
-            {
-                "title": "Waste Management Optimization",
-                "category": "Environment",
-                "organization": "Ministry of Environment",
-                "description": "Develop a smart waste segregation and management system using IoT sensors and data analytics for efficient waste processing."
+                "description": "Implement an intelligent traffic management system using computer vision and machine learning to reduce congestion.",
+                "ps_id": "25003"
             }
         ]
         return pd.DataFrame(sample_data)
     except Exception as e:
-        st.error(f"❌ Error loading data: {str(e)}")
+        st.error(f"❌ Critical error in data loading: {str(e)}")
         return pd.DataFrame()
 
 # Main app
