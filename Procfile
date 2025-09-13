@@ -1,1 +1,0 @@
-web: sh setup.sh && streamlit run dashboard.py --server.port $PORT --server.headless true --server.runOnSave false

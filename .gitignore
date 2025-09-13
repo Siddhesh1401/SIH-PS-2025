@@ -1,12 +1,33 @@
+# Virtual environment
 venv/
+env/
+ENV/
+
+# Python cache
 __pycache__/
 *.pyc
-.DS_Store
-*.log
-.env
+*.pyo
+*.pyd
+
+# IDE files
 .vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Data files (optional - uncomment if you want to exclude)
+# sih_ps_output/
+# *.csv
+# *.json
+
+# Logs
+*.log
+logs/
+
+# Temporary files
 *.tmp
-sih_ps_output/*.md
-# Allow main data files
-!sih_ps_output/sih_ps_all.json
-!sih_ps_output/sih_ps_all.csv
+*.temp

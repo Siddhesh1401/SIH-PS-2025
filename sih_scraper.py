@@ -15,10 +15,7 @@ OUT_DIR = Path("sih_ps_output")
 OUT_DIR.mkdir(exist_ok=True)
 
 def fetch_page(url):
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
-    resp = requests.get(url, headers=headers, timeout=30)
+    resp = requests.get(url, timeout=30)
     resp.raise_for_status()
     return resp.text
 
@@ -117,7 +114,7 @@ def write_outputs(records):
     # Individual markdown files
     for rec in records:
         pid = rec.get("ps_id") or "unknown"
-        safe_title = re.sub(r"[^\w\s-]", "", (rec.get("title") or "")).strip().replace("\n", " ").replace(" ", "_")[:80]
+        safe_title = re.sub(r"[^\w\s-]", "", (rec.get("title") or "")).strip().replace(" ", "_")[:80]
         fname = OUT_DIR / f"{pid}_{safe_title}.md"
         with open(fname, "w", encoding="utf-8") as md:
             md.write(f"# {rec.get('title') or 'No title'}\n\n")
