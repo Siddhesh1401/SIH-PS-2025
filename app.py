@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import json
 import os
+import requests
 from pathlib import Path
 
 # Set page config
@@ -42,15 +43,18 @@ st.markdown("""
 @st.cache_data
 def load_data():
     try:
-        # Try to load from JSON file
-        json_path = Path("sih_ps_output/sih_ps_all.json")
-        if json_path.exists():
-            with open(json_path, 'r', encoding='utf-8') as f:
-                data = json.load(f)
+        # For Streamlit Cloud - load from cloud storage
+        # Replace this URL with your actual data file URL
+        json_url = "https://raw.githubusercontent.com/Siddhesh1401/SIH-PS-2025/main/sih_ps_output/sih_ps_all.json"
+
+        import requests
+        response = requests.get(json_url)
+        if response.status_code == 200:
+            data = response.json()
             return pd.DataFrame(data)
         else:
-            # Create sample data for demonstration
-            st.warning("⚠️ Data files not found in repository. Using sample data for demonstration.")
+            # Fallback to sample data
+            st.warning("⚠️ Could not load full data from cloud. Showing sample data instead.")
             sample_data = [
                 {
                     "title": "Smart Community Health Monitoring System",
