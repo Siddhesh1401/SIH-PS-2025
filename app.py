@@ -84,7 +84,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Load data
-@st.cache_data
+# @st.cache_data  # Temporarily disabled for debugging
 def load_data():
     try:
         # For Streamlit Cloud, prioritize GitHub URLs over local files
@@ -162,6 +162,12 @@ def main():
 
     # Load data
     df = load_data()
+    
+    # Debug information
+    st.write(f"Debug: DataFrame shape: {df.shape}")
+    st.write(f"Debug: DataFrame empty: {df.empty}")
+    if not df.empty:
+        st.write(f"Debug: First title: {df.iloc[0].get('title', 'N/A')[:50]}...")
 
     if df.empty:
         st.error("❌ No data available. The application is currently showing sample data.")
