@@ -3,19 +3,29 @@
   "builds": [
     {
       "src": "dashboard.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "dashboard.py"
+      "dest": "/dashboard.py"
     }
   ],
   "functions": {
     "dashboard.py": {
       "runtime": "python3.9",
-      "maxDuration": 30
+      "maxDuration": 30,
+      "memory": 1024
     }
+  },
+  "env": {
+    "STREAMLIT_SERVER_HEADLESS": "true",
+    "STREAMLIT_SERVER_PORT": "8000",
+    "STREAMLIT_SERVER_ADDRESS": "0.0.0.0"
   }
+}
 }
