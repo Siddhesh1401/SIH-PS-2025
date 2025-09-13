@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIH Problem Statements Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px 20px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            background: #1f77b4;
+            color: white;
+        }
+
+        .tab-button:hover {
+            background: #e9ecef;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: #1f77b4;
+        }
+
+        .problems-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .problem-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 10px;
+            padding: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .problem-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1f77b4;
+            margin-bottom: 10px;
+        }
+
+        .problem-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .problem-description {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .category-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #1f77b4;
+            color: white;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+            font-size: 0.9rem;
+        }
+
+        .analytics-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .chart-placeholder {
+            background: #f8f9fa;
+            border: 2px dashed #dee2e6;
+            border-radius: 10px;
+            padding: 40px;
+            text-align: center;
+            color: #666;
+        }
+
+        .info-message {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-message h3 {
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            white-space: pre-line;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .analytics-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 SIH Problem Statements Dashboard</h1>
+            <p>Smart India Hackathon 2025 - Problem Statement Explorer</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="tabs">
+                <button class="tab-button active" onclick="showTab('browse')">Browse</button>
+                <button class="tab-button" onclick="showTab('search')">Search</button>
+                <button class="tab-button" onclick="showTab('analytics')">Analytics</button>
+            </div>
+
+            <div id="browse" class="tab-content active">
+                <div class="info-message">
+                    <h3>📊 Sample Data Display</h3>
+                    <p>This dashboard is currently showing sample problem statements. To view all 135+ real SIH problems:</p>
+                    <div class="code-block"># Run locally to generate data:
+python sih_scraper.py
+
+# Then upload sih_ps_output/ to cloud storage
+# or use the data with a Python web framework</div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Sample Problems</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Categories</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Organizations</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">135+</div>
+                        <div class="stat-label">Real Problems Available</div>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <select class="filter-select" id="categoryFilter">
+                        <option value="all">All Categories</option>
+                        <option value="healthcare">Healthcare</option>
+                        <option value="agriculture">Agriculture</option>
+                        <option value="transportation">Transportation</option>
+                        <option value="education">Education</option>
+                        <option value="environment">Environment</option>
+                    </select>
+                    <select class="filter-select" id="orgFilter">
+                        <option value="all">All Organizations</option>
+                        <option value="ministry-health">Ministry of Health</option>
+                        <option value="ministry-agriculture">Ministry of Agriculture</option>
+                        <option value="ministry-transport">Ministry of Road Transport</option>
+                        <option value="ministry-education">Ministry of Education</option>
+                        <option value="ministry-environment">Ministry of Environment</option>
+                    </select>
+                </div>
+
+                <div class="problems-grid" id="problemsGrid">
+                    <!-- Problems will be loaded here -->
+                </div>
+            </div>
+
+            <div id="search" class="tab-content">
+                <div class="search-container">
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search problem statements...">
+                </div>
+                <div id="searchResults">
+                    <p style="text-align: center; color: #666; padding: 40px;">Enter a search term to find relevant problems</p>
+                </div>
+            </div>
+
+            <div id="analytics" class="tab-content">
+                <div class="analytics-container">
+                    <div class="chart-placeholder">
+                        <h3>📈 Category Distribution</h3>
+                        <p>Interactive chart showing problem distribution by category</p>
+                    </div>
+                    <div class="chart-placeholder">
+                        <h3>🏢 Organization Statistics</h3>
+                        <p>Analysis of problems by participating organizations</p>
+                    </div>
+                    <div class="chart-placeholder">
+                        <h3>🔍 Search Trends</h3>
+                        <p>Popular search terms and trending topics</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const sampleProblems = [
+            {
+                title: "Smart Community Health Monitoring System",
+                category: "Healthcare",
+                organization: "Ministry of Health",
+                description: "Develop a system for monitoring community health using IoT sensors and AI analytics for early disease detection and prevention."
+            },
+            {
+                title: "AI-Powered Crop Disease Detection",
+                category: "Agriculture",
+                organization: "Ministry of Agriculture",
+                description: "Create an AI system to detect crop diseases using image recognition and provide treatment recommendations to farmers."
+            },
+            {
+                title: "Smart Traffic Management System",
+                category: "Transportation",
+                organization: "Ministry of Road Transport",
+                description: "Implement an intelligent traffic management system using computer vision and machine learning to reduce congestion."
+            },
+            {
+                title: "Digital Learning Platform for Rural Areas",
+                category: "Education",
+                organization: "Ministry of Education",
+                description: "Build an offline-first digital learning platform for students in rural areas with limited internet connectivity."
+            },
+            {
+                title: "Waste Management Optimization",
+                category: "Environment",
+                organization: "Ministry of Environment",
+                description: "Develop a smart waste segregation and management system using IoT sensors and data analytics for efficient waste processing."
+            }
+        ];
+
+        // DOM elements
+        const problemsGrid = document.getElementById('problemsGrid');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const orgFilter = document.getElementById('orgFilter');
+
+        // Load problems
+        function loadProblems(problems = sampleProblems) {
+            problemsGrid.innerHTML = '';
+            problems.forEach(problem => {
+                const problemCard = document.createElement('div');
+                problemCard.className = 'problem-card';
+                problemCard.innerHTML = `
+                    <div class="problem-title">${problem.title}</div>
+                    <div class="problem-meta">
+                        <span class="category-tag">${problem.category}</span>
+                        <span>${problem.organization}</span>
+                    </div>
+                    <div class="problem-description">${problem.description}</div>
+                `;
+                problemsGrid.appendChild(problemCard);
+            });
+        }
+
+        // Search functionality
+        function performSearch() {
+            const query = searchInput.value.toLowerCase();
+            if (!query) {
+                searchResults.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">Enter a search term to find relevant problems</p>';
+                return;
+            }
+
+            const results = sampleProblems.filter(problem =>
+                problem.title.toLowerCase().includes(query) ||
+                problem.description.toLowerCase().includes(query) ||
+                problem.category.toLowerCase().includes(query) ||
+                problem.organization.toLowerCase().includes(query)
+            );
+
+            if (results.length === 0) {
+                searchResults.innerHTML = '<p style="text-align: center; color: #666; padding: 40px;">No problems found matching your search</p>';
+                return;
+            }
+
+            searchResults.innerHTML = `<h3 style="margin-bottom: 20px;">Found ${results.length} matching problem(s):</h3>`;
+            results.forEach(problem => {
+                const resultCard = document.createElement('div');
+                resultCard.className = 'problem-card';
+                resultCard.innerHTML = `
+                    <div class="problem-title">${problem.title}</div>
+                    <div class="problem-meta">
+                        <span class="category-tag">${problem.category}</span>
+                        <span>${problem.organization}</span>
+                    </div>
+                    <div class="problem-description">${problem.description}</div>
+                `;
+                searchResults.appendChild(resultCard);
+            });
+        }
+
+        // Filter functionality
+        function applyFilters() {
+            const categoryValue = categoryFilter.value;
+            const orgValue = orgFilter.value;
+
+            let filteredProblems = sampleProblems;
+
+            if (categoryValue !== 'all') {
+                const categoryMap = {
+                    'healthcare': 'Healthcare',
+                    'agriculture': 'Agriculture',
+                    'transportation': 'Transportation',
+                    'education': 'Education',
+                    'environment': 'Environment'
+                };
+                filteredProblems = filteredProblems.filter(p => p.category === categoryMap[categoryValue]);
+            }
+
+            if (orgValue !== 'all') {
+                const orgMap = {
+                    'ministry-health': 'Ministry of Health',
+                    'ministry-agriculture': 'Ministry of Agriculture',
+                    'ministry-transport': 'Ministry of Road Transport',
+                    'ministry-education': 'Ministry of Education',
+                    'ministry-environment': 'Ministry of Environment'
+                };
+                filteredProblems = filteredProblems.filter(p => p.organization === orgMap[orgValue]);
+            }
+
+            loadProblems(filteredProblems);
+        }
+
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(button => button.classList.remove('active'));
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Event listeners
+        searchInput.addEventListener('input', performSearch);
+        categoryFilter.addEventListener('change', applyFilters);
+        orgFilter.addEventListener('change', applyFilters);
+
+        // Initialize
+        loadProblems();
+    </script>
+</body>
+</html>
