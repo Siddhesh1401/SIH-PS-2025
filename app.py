@@ -49,8 +49,41 @@ def load_data():
                 data = json.load(f)
             return pd.DataFrame(data)
         else:
-            st.error("Data file not found. Please run the scraper first.")
-            return pd.DataFrame()
+            # Create sample data for demonstration
+            st.warning("⚠️ Data files not found in repository. Using sample data for demonstration.")
+            sample_data = [
+                {
+                    "title": "Smart Community Health Monitoring System",
+                    "category": "Healthcare",
+                    "organization": "Ministry of Health",
+                    "description": "Develop a system for monitoring community health using IoT sensors and AI analytics."
+                },
+                {
+                    "title": "AI-Powered Crop Disease Detection",
+                    "category": "Agriculture",
+                    "organization": "Ministry of Agriculture",
+                    "description": "Create an AI system to detect crop diseases using image recognition and provide treatment recommendations."
+                },
+                {
+                    "title": "Smart Traffic Management System",
+                    "category": "Transportation",
+                    "organization": "Ministry of Road Transport",
+                    "description": "Implement an intelligent traffic management system using computer vision and machine learning."
+                },
+                {
+                    "title": "Digital Learning Platform for Rural Areas",
+                    "category": "Education",
+                    "organization": "Ministry of Education",
+                    "description": "Build an offline-first digital learning platform for students in rural areas with limited internet connectivity."
+                },
+                {
+                    "title": "Waste Management Optimization",
+                    "category": "Environment",
+                    "organization": "Ministry of Environment",
+                    "description": "Develop a smart waste segregation and management system using IoT sensors and data analytics."
+                }
+            ]
+            return pd.DataFrame(sample_data)
     except Exception as e:
         st.error(f"Error loading data: {str(e)}")
         return pd.DataFrame()
@@ -64,8 +97,22 @@ def main():
     df = load_data()
 
     if df.empty:
-        st.error("No data available. Please check if the scraper has been run.")
+        st.error("❌ No data available. The application is currently showing sample data.")
+        st.info("💡 **To use real SIH data:**")
+        st.code("""
+# Run locally to generate data:
+python sih_scraper.py
+
+# Then upload the sih_ps_output/ folder to your hosting platform
+# or use a cloud storage solution like AWS S3, Google Cloud Storage
+        """)
         return
+
+    # Show data info
+    if len(df) <= 5:
+        st.info(f"📊 Currently showing {len(df)} sample problem statements. Upload real data to see all 135+ problems.")
+    else:
+        st.success(f"📊 Loaded {len(df)} problem statements successfully!")
 
     # Sidebar
     st.sidebar.title("🔍 Navigation")
